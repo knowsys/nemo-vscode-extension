@@ -60,9 +60,9 @@ export async function showStartupMessage() {
         }
     }
 
-    // if (!showMessage) {
-    //     return;
-    // }
+    if (!showMessage) {
+        return;
+    }
 
     const items = [
         "Alternatives: VSCodium",
