@@ -22,7 +22,7 @@ In [web contexts](https://code.visualstudio.com/docs/editor/vscode-web#_extensio
     ```
     git clone -b parser https://github.com/knowsys/nemo.git
     cd nemo
-    cargo build --release --bin nemo-languager-server
+    cargo build --release --package nemo-language-server --bin nemo-language-server
     # Get path to language server binary
     realpath target/release/nemo-language-server
     ```
