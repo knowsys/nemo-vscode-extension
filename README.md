@@ -37,7 +37,7 @@ In [web contexts](https://code.visualstudio.com/docs/editor/vscode-web#_extensio
 
     ```bash
     # Copy nemo-wasm library to the correct location
-    cp -rTv $PATH_TO_NEMO_WASM/nemoWASMWeb .
+    cp -r $PATH_TO_NEMO_WASM/nemoWASMWeb .
 
     npm install
     npm run package
