@@ -47,22 +47,26 @@
         },           
 
         "fstring": {
-            "match": "(f)(\"[^{]*)(\\{[?0-9a-zA-Z<=>+\\-*/ ]*\\})?([^}]*\")",
+            "name" : "string",
+            "begin": "(f)(\")",
+            "end": "\"",
             "captures": {
-                "1" : {
-                    "name" : "keyword.other" 
+                "1" : {"name" : "keyword"},
+                "2" : {"name" : "string"}
+
+            },
+            "patterns": [
+                {
+                    "name" : "keyword.operator",
+                    "match" : "\\{[^{}]*\\}"
                 },
-                "2" : {
-                    "name" : "string"
-                },
-                "3" : {
-                    "name" : "operator"
-                },
-                "4" : {
-                    "name" : "string"
+                {
+                    "name" : "string",
+                    "match" : "[^{}\"]*"
                 }
-            }
+            ]
         },
+        
 
         "specialVariable": {
             "name": "variable",
