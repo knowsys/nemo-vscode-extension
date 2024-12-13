@@ -51,9 +51,12 @@
             "begin": "(f)(\")",
             "end": "\"",
             "captures": {
-                "1" : {"name" : "keyword"},
-                "2" : {"name" : "string"}
-
+                "1" : {
+                    "name" : "keyword"
+                },
+                "2" : {
+                    "name" : "string"
+                }
             },
             "patterns": [
                 {
@@ -66,7 +69,6 @@
                 }
             ]
         },
-        
 
         "specialVariable": {
             "name": "variable",
