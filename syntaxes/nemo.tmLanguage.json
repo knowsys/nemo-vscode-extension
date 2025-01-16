@@ -3,6 +3,12 @@
     "name": "Nemo Rule Language",
     "patterns": [
         {
+            "include": "#attribute"
+        },
+        {
+            "include": "#fstring"
+        },
+        {
             "include": "#specialDeclation"
         },
         {
@@ -33,7 +39,37 @@
             "include": "#invalid"
         }
     ],
-    "repository": {
+    "repository": {     
+        "attribute": {
+            "name": "entity.name.tag",
+            "begin": "(#\\[)",
+            "end": "(\\])"
+        },           
+
+        "fstring": {
+            "name" : "string",
+            "begin": "(f)(\")",
+            "end": "\"",
+            "captures": {
+                "1" : {
+                    "name" : "keyword"
+                },
+                "2" : {
+                    "name" : "string"
+                }
+            },
+            "patterns": [
+                {
+                    "name" : "keyword.operator",
+                    "match" : "\\{[^{}]*\\}"
+                },
+                {
+                    "name" : "string",
+                    "match" : "[^{}\"]*"
+                }
+            ]
+        },
+
         "specialVariable": {
             "name": "variable",
             "match": "\\?[a-zA-Z][a-zA-Z0-9_\\-]*"
