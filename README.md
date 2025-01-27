@@ -17,10 +17,10 @@ This editor extension works with VSIX-compatible editors such as [VSCodium](http
 
 In [web contexts](https://code.visualstudio.com/docs/editor/vscode-web#_extensions), this extension works out of the box (using web assembly). In all other contexts, one needs to setup the Nemo language server manually:
 
--   Build the [Nemo language server]([Nemo WASM library](https://github.com/knowsys/nemo/tree/parser/nemo-language-server)) for your platform
+-   Build the [Nemo language server](https://github.com/knowsys/nemo/tree/main/nemo-language-server) for your platform
 
     ```
-    git clone -b parser https://github.com/knowsys/nemo.git
+    git clone https://github.com/knowsys/nemo.git
     cd nemo
     cargo build --release --package nemo-language-server --bin nemo-language-server
     # Get path to language server binary
