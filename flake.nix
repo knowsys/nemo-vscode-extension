@@ -159,6 +159,68 @@ rec {
               };
           };
 
+          devShells.default = dream2nix.lib.evalModules {
+            packageSets.nixpkgs = pkgs;
+
+            modules = [
+              {
+                paths = {
+                  projectRoot = ./.;
+                  projectRootFile = "flake.nix";
+                  package = ./.;
+                };
+              }
+
+              (
+
+                {
+                  lib,
+                  config,
+                  dream2nix,
+                  ...
+                }:
+                {
+                  name = "nemo-vscode-extension-vsix";
+                  inherit version;
+
+                  imports = [
+                    dream2nix.modules.dream2nix.nodejs-package-lock-v3
+                    dream2nix.modules.dream2nix.nodejs-devshell-v3
+                  ];
+
+                  mkDerivation = {
+                    src = pkgs.runCommandNoCCLocal "nemo-vscode-extension-vsix-source" { } ''
+                      mkdir $out
+                      cp -R ${lib.cleanSource ./.}/* $out
+                      cp -R ${pkgs.nemo-wasm-web}/lib/node_modules/nemo-wasm/ $out/nemoWASMWeb
+                    '';
+
+                    nativeBuildInputs = [
+                      pkgs.nodejs
+                    ];
+
+                    buildPhase = "mkdir $out";
+                  };
+
+                  deps =
+                    { nixpkgs, ... }:
+                    {
+                      inherit (nixpkgs) stdenv pkg-config libsecret;
+                    };
+
+                  nodejs-package-lock-v3 = {
+                    packageLockFile = "${config.mkDerivation.src}/package-lock.json";
+                  };
+
+                  nodejs-devshell-v3.nodeModules.nodejs-granular-v3.overrides.keytar.mkDerivation.buildInputs = [
+                    config.deps.pkg-config
+                    config.deps.libsecret
+                  ];
+                }
+              )
+            ];
+          };
+
           formatter = channels.nixpkgs.nixfmt-rfc-style;
         };
 
