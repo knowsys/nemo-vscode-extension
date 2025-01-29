@@ -86,6 +86,7 @@ rec {
 
               (
                 {
+                  lib,
                   config,
                   dream2nix,
                   ...
@@ -115,7 +116,7 @@ rec {
                     { nixpkgs, ... }:
                     {
                       inherit (nixpkgs) stdenv pkg-config libsecret;
-                      nemo-wasm-web = nemo.packages.${nixpkgs.system}.nemo-wasm-web;
+                      nemo-wasm-web = lib.mkDefault nemo.packages.${nixpkgs.system}.nemo-wasm-web;
                     };
 
                   nodejs-package-lock-v3 = {
@@ -185,6 +186,7 @@ rec {
 
               (
                 {
+                  lib,
                   config,
                   dream2nix,
                   ...
@@ -212,7 +214,7 @@ rec {
                     { nixpkgs, ... }:
                     {
                       inherit (nixpkgs) stdenv pkg-config libsecret;
-                      nemo-wasm-web = nemo.packages.${nixpkgs.system}.nemo-wasm-web;
+                      nemo-wasm-web = lib.mkDefault nemo.packages.${nixpkgs.system}.nemo-wasm-web;
                     };
 
                   nodejs-package-lock-v3 = {
