@@ -33,6 +33,17 @@ rec {
         nemo.overlays.default
       ];
 
+      overlays = {
+        default =
+          final: prev:
+          let
+            pkgs = self.packages.${final.system};
+          in
+          {
+            inherit (pkgs) nemo-vscode-extension-vsix nemo-vscode-extension;
+          };
+      };
+
       outputsBuilder =
         channels:
         let
@@ -115,17 +126,6 @@ rec {
           };
         in
         {
-          overlays = {
-            default =
-              final: prev:
-              let
-                pkgs = self.packages.${final.system};
-              in
-              {
-                inherit (pkgs) nemo-vscode-extension-vsix nemo-vscode-extension;
-              };
-          };
-
           packages = {
             inherit nemo-vscode-extension-vsix;
 
