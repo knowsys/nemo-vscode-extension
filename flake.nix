@@ -57,6 +57,17 @@ rec {
             homepage = npmMeta.repository.url;
           };
 
+          nemoWASMWeb = pkgs.runCommandLocal "nemoWASMWeb" { } ''
+            mkdir $out
+            cp -R ${pkgs.nemo-wasm-web}/lib/node_modules/nemo-wasm/ $out/nemoWASMWeb
+          '';
+
+          nemo-vscode-extension-source = pkgs.runCommandLocal "nemo-vscode-extension-source" { } ''
+            mkdir $out
+            cp -R ${pkgs.lib.cleanSource ./.}/* $out
+            ln -s ${nemoWASMWeb}/nemoWASMWeb $out
+          '';
+
           nemo-vscode-extension-vsix = dream2nix.lib.evalModules {
             packageSets.nixpkgs = pkgs;
 
@@ -70,9 +81,7 @@ rec {
               }
 
               (
-
                 {
-                  lib,
                   config,
                   dream2nix,
                   ...
@@ -87,11 +96,7 @@ rec {
                   ];
 
                   mkDerivation = {
-                    src = pkgs.runCommandNoCCLocal "nemo-vscode-extension-vsix-source" { } ''
-                      mkdir $out
-                      cp -R ${lib.cleanSource ./.}/* $out
-                      cp -R ${pkgs.nemo-wasm-web}/lib/node_modules/nemo-wasm/ $out/nemoWASMWeb
-                    '';
+                    src = nemo-vscode-extension-source;
 
                     installPhase = ''
                       runHook preInstall
@@ -190,11 +195,7 @@ rec {
                   ];
 
                   mkDerivation = {
-                    src = pkgs.runCommandNoCCLocal "nemo-vscode-extension-vsix-source" { } ''
-                      mkdir $out
-                      cp -R ${lib.cleanSource ./.}/* $out
-                      cp -R ${pkgs.nemo-wasm-web}/lib/node_modules/nemo-wasm/ $out/nemoWASMWeb
-                    '';
+                    src = nemo-vscode-extension-source;
 
                     nativeBuildInputs = [
                       pkgs.nodejs
