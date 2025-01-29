@@ -57,16 +57,20 @@ rec {
             homepage = npmMeta.repository.url;
           };
 
-          nemoWASMWeb = pkgs.runCommandLocal "nemoWASMWeb" { } ''
-            mkdir $out
-            cp -R ${pkgs.nemo-wasm-web}/lib/node_modules/nemo-wasm/ $out/nemoWASMWeb
-          '';
+          nemoWASMWeb =
+            config:
+            pkgs.runCommandLocal "nemoWASMWeb" { } ''
+              mkdir $out
+              cp -R ${config.deps.nemo-wasm-web}/lib/node_modules/nemo-wasm/ $out/nemoWASMWeb
+            '';
 
-          nemo-vscode-extension-source = pkgs.runCommandLocal "nemo-vscode-extension-source" { } ''
-            mkdir $out
-            cp -R ${pkgs.lib.cleanSource ./.}/* $out
-            ln -s ${nemoWASMWeb}/nemoWASMWeb $out
-          '';
+          nemo-vscode-extension-source =
+            config:
+            pkgs.runCommandLocal "nemo-vscode-extension-source" { } ''
+              mkdir $out
+              cp -R ${pkgs.lib.cleanSource ./.}/* $out
+              ln -s ${nemoWASMWeb config}/nemoWASMWeb $out
+            '';
 
           nemo-vscode-extension-vsix = dream2nix.lib.evalModules {
             packageSets.nixpkgs = pkgs;
@@ -96,7 +100,7 @@ rec {
                   ];
 
                   mkDerivation = {
-                    src = nemo-vscode-extension-source;
+                    src = nemo-vscode-extension-source config;
 
                     installPhase = ''
                       runHook preInstall
@@ -111,6 +115,7 @@ rec {
                     { nixpkgs, ... }:
                     {
                       inherit (nixpkgs) stdenv pkg-config libsecret;
+                      nemo-wasm-web = nemo.packages.${nixpkgs.system}.nemo-wasm-web;
                     };
 
                   nodejs-package-lock-v3 = {
@@ -180,7 +185,6 @@ rec {
 
               (
                 {
-                  lib,
                   config,
                   dream2nix,
                   ...
@@ -195,7 +199,7 @@ rec {
                   ];
 
                   mkDerivation = {
-                    src = nemo-vscode-extension-source;
+                    src = nemo-vscode-extension-source config;
 
                     nativeBuildInputs = [
                       pkgs.nodejs
@@ -208,6 +212,7 @@ rec {
                     { nixpkgs, ... }:
                     {
                       inherit (nixpkgs) stdenv pkg-config libsecret;
+                      nemo-wasm-web = nemo.packages.${nixpkgs.system}.nemo-wasm-web;
                     };
 
                   nodejs-package-lock-v3 = {
