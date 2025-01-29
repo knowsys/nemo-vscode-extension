@@ -126,7 +126,7 @@ rec {
           };
         in
         {
-          packages = {
+          packages = rec {
             inherit nemo-vscode-extension-vsix;
 
             nemo-vscode-extension =
@@ -157,6 +157,8 @@ rec {
                   package.json | sponge package.json
                 '';
               };
+
+            default = nemo-vscode-extension;
           };
 
           devShells.default = dream2nix.lib.evalModules {
@@ -172,7 +174,6 @@ rec {
               }
 
               (
-
                 {
                   lib,
                   config,
