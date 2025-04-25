@@ -10,8 +10,6 @@ import * as common from "../common/common";
 import { dirname, join } from "path";
 
 export async function activate(context: vscode.ExtensionContext) {
-    showStartupMessage();
-
     await common.activate(context, createLanguageClient);
 
     vscode.workspace.onDidChangeConfiguration((event) => {
@@ -21,93 +19,6 @@ export async function activate(context: vscode.ExtensionContext) {
     });
 }
 
-export async function showStartupMessage() {
-    if (
-        vscode.workspace
-            .getConfiguration()
-            .get<boolean>("nemo.hideStartupMessage") === true
-    ) {
-        return;
-    }
-
-    let showMessage = false;
-
-    try {
-        const product: any = JSON.parse(
-            (
-                await readFile(
-                    join(
-                        dirname(process.execPath),
-                        "resources",
-                        "app",
-                        "product.json"
-                    )
-                )
-            ).toString()
-        );
-
-        if (
-            product.nameLong.includes("Visual Studio Code") ||
-            product.extensionsGallery.serviceUrl.startsWith(
-                "https://marketplace.visualstudio.com"
-            )
-        ) {
-            showMessage = true;
-        }
-    } catch {
-        if (process.execPath.endsWith("code")) {
-            showMessage = true;
-        }
-    }
-
-    if (!showMessage) {
-        return;
-    }
-
-    const items = [
-        "Alternatives: VSCodium",
-        "Microsoft hurting the open source editor community (1)",
-        "Microsoft hurting the open source editor community (2)",
-        "Microsoft hurting the open source editor community (3)",
-    ];
-    const result = await vscode.window.showWarningMessage(
-        "Consider switching to an open-source variant of VS Code, please!",
-        {
-            modal: true,
-            detail: "It seems that you are using a proproietary variant of VS Code. Please switch to an open source variant and let us regain control over the software we use. This message can be disabled in the settings.",
-        },
-        ...items
-    );
-
-    switch (items.indexOf(result!)) {
-        case 0:
-            vscode.env.openExternal(vscode.Uri.parse("https://vscodium.com/"));
-            break;
-        case 1:
-            vscode.env.openExternal(
-                vscode.Uri.parse(
-                    "https://github.com/microsoft/vscode/issues/31168"
-                )
-            );
-            break;
-        case 2:
-            vscode.env.openExternal(
-                vscode.Uri.parse(
-                    "https://github.com/microsoft/vscode-cpptools/issues/6388"
-                )
-            );
-            break;
-        case 3:
-            vscode.env.openExternal(
-                vscode.Uri.parse(
-                    "https://www.eclipse.org/community/eclipse_newsletter/2020/march/1.php"
-                )
-            );
-            break;
-        default:
-            break;
-    }
-}
 
 export function deactivate() {
     common.deactivate();
