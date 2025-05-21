@@ -33,10 +33,6 @@
                 "nemo.languageServerExecutablePath": {
                     "type": "string",
                     "description": "Specifies the command to start the Nemo Language Server executable. See extension README.md for further information."
-                },
-                "nemo.hideStartupMessage": {
-                    "type": "boolean",
-                    "description": "Disables the startup message."
                 }
             }
         },
