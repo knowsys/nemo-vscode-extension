@@ -68,8 +68,9 @@ rec {
             config:
             pkgs.runCommandLocal "nemo-vscode-extension-source" { } ''
               mkdir $out
+              cp ${./.vscodeignore} $out # clearSource will drop this, but vsce requires it
               cp -R ${pkgs.lib.cleanSource ./.}/* $out
-              ln -s ${nemoWASMWeb config}/nemoWASMWeb $out
+              cp -R ${nemoWASMWeb config}/nemoWASMWeb $out
             '';
 
           nemo-vscode-extension-vsix = dream2nix.lib.evalModules {
