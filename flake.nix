@@ -2,8 +2,7 @@ rec {
   description = "Visual Studio Code extension for the Nemo rule language";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
-    utils.url = "github:gytis-ivaskevicius/flake-utils-plus";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     dream2nix = {
       url = "github:nix-community/dream2nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -11,44 +10,36 @@ rec {
 
     nemo = {
       url = "github:knowsys/nemo";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        utils.follows = "utils";
-      };
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs =
-    inputs@{
+    {
       self,
-      utils,
+      nixpkgs,
       nemo,
       dream2nix,
       ...
     }:
-    utils.lib.mkFlake {
-      inherit self inputs;
-
-      channels.nixpkgs.overlaysBuilder = channels: [
-        nemo.overlays.default
+    let
+      inherit (nixpkgs) lib;
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
+        "x86_64-darwin"
       ];
+      forAllSystems' = systems: f: lib.genAttrs systems f;
+      forAllSystems = forAllSystems' systems;
 
-      overlays = {
-        default =
-          final: prev:
-          let
-            pkgs = self.packages.${final.system};
-          in
-          {
-            inherit (pkgs) nemo-vscode-extension-vsix nemo-vscode-extension;
-          };
-      };
-
-      outputsBuilder =
-        channels:
+      perSystem =
+        system:
         let
-          pkgs = channels.nixpkgs;
-
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [ nemo.overlays.default ];
+          };
           npmMeta = builtins.fromJSON (builtins.readFile ./package.json);
           inherit (npmMeta) version;
 
@@ -117,7 +108,7 @@ rec {
                     { nixpkgs, ... }:
                     {
                       inherit (nixpkgs) stdenv pkg-config libsecret;
-                      nemo-wasm-web = lib.mkDefault nemo.packages.${nixpkgs.system}.nemo-wasm-web;
+                      nemo-wasm-web = lib.mkDefault nemo.packages.${system}.nemo-wasm-web;
                     };
 
                   nodejs-package-lock-v3 = {
@@ -138,7 +129,7 @@ rec {
           };
         in
         {
-          packages = rec {
+          packages = {
             inherit nemo-vscode-extension-vsix;
 
             nemo-vscode-extension =
@@ -170,7 +161,7 @@ rec {
                 '';
               };
 
-            default = nemo-vscode-extension;
+            default = self.packages.${system}.nemo-vscode-extension;
           };
 
           devShells.default = dream2nix.lib.evalModules {
@@ -215,7 +206,7 @@ rec {
                     { nixpkgs, ... }:
                     {
                       inherit (nixpkgs) stdenv pkg-config libsecret;
-                      nemo-wasm-web = lib.mkDefault nemo.packages.${nixpkgs.system}.nemo-wasm-web;
+                      nemo-wasm-web = lib.mkDefault nemo.packages.${system}.nemo-wasm-web;
                     };
 
                   nodejs-package-lock-v3 = {
@@ -231,8 +222,27 @@ rec {
             ];
           };
 
-          formatter = channels.nixpkgs.nixfmt-rfc-style;
+          formatter = pkgs.nixfmt-rfc-style;
         };
+      shared = {
+        overlays = {
+          default =
+            final: prev:
+            let
+              pkgs = self.packages.${final.stdenv.hostPlatform.system};
+            in
+            {
+              inherit (pkgs) nemo-vscode-extension-vsix nemo-vscode-extension;
+            };
 
-    };
+          nemo = nemo.overlays.default;
+        };
+      };
+    in
+    shared
+    // (lib.genAttrs [
+      "packages"
+      "devShells"
+      "formatter"
+    ] (output: forAllSystems (system: (perSystem system).${output})));
 }
