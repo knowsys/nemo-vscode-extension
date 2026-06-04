@@ -148,6 +148,7 @@ rec {
                 nativeBuildInputs = [
                   pkgs.jq
                   pkgs.moreutils
+                  pkgs.unzip
                 ];
 
                 unpackPhase = ''
