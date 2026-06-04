@@ -2,7 +2,7 @@ rec {
   description = "Visual Studio Code extension for the Nemo rule language";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nixpkgs.url = "https://channels.nixos.org/nixos-26.05/nixexprs.tar.xz";
     dream2nix = {
       url = "github:nix-community/dream2nix";
       inputs.nixpkgs.follows = "nixpkgs";
