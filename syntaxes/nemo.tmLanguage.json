@@ -42,33 +42,33 @@
             "include": "#invalid"
         }
     ],
-    "repository": {     
+    "repository": {
         "attribute": {
             "name": "entity.name.tag",
             "begin": "(#\\[)",
             "end": "(\\])"
-        },           
+        },
 
         "fstring": {
-            "name" : "string",
+            "name": "string",
             "begin": "(f)(\")",
             "end": "\"",
             "captures": {
-                "1" : {
-                    "name" : "keyword"
+                "1": {
+                    "name": "keyword"
                 },
-                "2" : {
-                    "name" : "string"
+                "2": {
+                    "name": "string"
                 }
             },
             "patterns": [
                 {
-                    "name" : "keyword.operator",
-                    "match" : "\\{[^{}]*\\}"
+                    "name": "keyword.operator",
+                    "match": "\\{[^{}]*\\}"
                 },
                 {
-                    "name" : "string",
-                    "match" : "[^{}\"]*"
+                    "name": "string",
+                    "match": "[^{}\"]*"
                 }
             ]
         },
@@ -85,7 +85,7 @@
 
         "comment": {
             "name": "comment",
-            "match": "%(.)*\n"
+            "match": "#(.)*\n"
         },
 
         "punctuation": {
